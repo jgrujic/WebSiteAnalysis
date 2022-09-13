@@ -1,6 +1,7 @@
 *.png
 .idea/
 *~
+proba*.txt
 
 # Environments
 .env/
