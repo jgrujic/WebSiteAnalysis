@@ -75,19 +75,11 @@ def generate_ngrams(s, n):
     return [" ".join(ngram) for ngram in ngrams]
 
 
-# import re
-# from nltk.util import ngrams
-#
-# s = s.lower()
-# s = re.sub(r'[^a-zA-Z0-9\s]', ' ', s)
-# tokens = [token for token in s.split(" ") if token != ""]
-# output = list(ngrams(tokens, 5))
-
-
 def clean_words(wordlist):
     clean_list = []
     stoplist = stopwords.words('english')
-    common_noinfo_words = ["see"]
+
+#    common_noinfo_words = ["see"]
     print("%% stoplist %%", stoplist)
     for word in wordlist:
         symbols = "!@#$%^&*()_-+={[}]|\;:\"<>?/., "
@@ -98,8 +90,13 @@ def clean_words(wordlist):
         if (len(word) > 0) and (word not in stoplist) and (word not in common_noinfo_words):
             clean_list.append(lemmatizer.lemmatize(word))
 
+            # Lemmatization usually refers to doing things properly
+            # with the use of a vocabulary and morphological analysis of words,
+            # normally aiming to remove inflectional endings only and to return the
+            # base or dictionary form of a word, which is known as the lemma .
+
     #  clean_list = ' '.join([lemmatizer.lemmatize(w) for w in clean_list])
-    create_dictionary(clean_list)
+    return clean_list
 
 
 # remove unwanted symobols, stop words
@@ -118,27 +115,6 @@ def clean_words_old(wordlist):
         if (len(word) > 0) and (word not in stoplist):
             clean_list.append(word)
     create_dictionary(clean_list)
-
-
-# remove unwanted symobols
-def clean_words_old_old(wordlist):
-    clean_list = []
-
-    for word in wordlist:
-        symbols = "!@#$%^&*()_-+={[}]|\;:\"<>?/., "
-
-        for i in range(len(symbols)):
-            word = word.replace(symbols[i], '')
-
-        if len(word) > 0:
-            clean_list.append(word)
-    create_dictionary(clean_list)
-
-
-# Creates a dictionary conatining each word's
-# count and top_20 ocuuring words
-
-
 def create_dictionary(clean_list):
     word_count = {}
 
@@ -165,15 +141,9 @@ def create_dictionary(clean_list):
 
     # returns the most occurring elements
     top = c.most_common(20)
-    print(top)
+    return top
 
 
-# def make_world_cloude(
-#    word_cloud = WordCloud(collocations = False, background_color = 'white').generate(text)
-# )
-
-
-# Driver code
 
 
 def get_all_content(start_url, url=None, all_url=[], content=""):
@@ -184,21 +154,28 @@ def get_all_content(start_url, url=None, all_url=[], content=""):
     for each_text in soup.findAll('p'):
         content = content + " " + each_text.text
     #        print(each_text.text)
+    all_url.append(start_url)
     for a in soup.find_all('a', href=True):
         link = a['href']
-#        print('link', link, 'start_url', start_url)
+        #        print('link', link, 'start_url', start_url)
         if link.startswith(start_url):
- #           print('check ', link, all_url)
+            #           print('check ', link, all_url)
             if link not in all_url:
-                print('appoved link ', link)
+                #               print('appoved link ', link)
                 all_url.append(link)
                 content, all_url = get_all_content(start_url, link, all_url, content)
     #               content = content + content1
     #               print('final_url_list1',final_url_list1)
     #          all_url.extend(final_url_list1)
 
-#    print("all_url", all_url)
+    #    print("all_url", all_url)
     return content, all_url
+
+def make_word_cloude(text, image_name):
+    word_cloud = WordCloud(collocations=False, background_color='white').generate(text)
+    plt.imshow(word_cloud, interpolation='bilinear')
+    plt.axis("off")
+    plt.savefig('image_name.png')
 
 
 if __name__ == '__main__':
@@ -260,10 +237,10 @@ if __name__ == '__main__':
 
     x = "begin"
     y = "beginend"
-    print("test starts with: ", y.startswith(x))
+    #   print("test starts with: ", y.startswith(x))
     text1, all_url = get_all_content("https://www.dataminded.com")
     print(text1)
-    print(all_url)
+    #   print(all_url)
     word_cloud1 = WordCloud(collocations=False, background_color='white').generate(text1)
     plt.imshow(word_cloud1, interpolation='bilinear')
     plt.axis("off")
@@ -271,8 +248,11 @@ if __name__ == '__main__':
 
     text2 = start(url_list1)
     print("comarison: ", len(text1), len(text2))
-    print("url list comparison", len(all_url), len(url_list1))
-    print(text2)
+#   print("url list comparison", len(all_url), len(url_list1))
+#   print(text2)
+
+#    print(create_dictionary(generate_ngrams(text1, 5)))
+#    print(create_dictionary(generate_ngrams(text2, 5)))
 #  word_cloud2 = WordCloud(collocations=False, background_color='white').generate(text2)
 #  plt.imshow(word_cloud2, interpolation='bilinear')
 #  plt.axis("off")
